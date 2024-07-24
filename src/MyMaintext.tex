@@ -16,7 +16,7 @@ The main research question of this paper is:
 \importantquote{\textit{How does an alternative to cloud-based smart home systems work and can it improve the privacy of users without limiting their capabilities compared to traditional smart home platforms?} }
 
 \subsection{Research method}
-With a view to the aforementioned topics, this paper will start off with a brief introduction to smart home systems and discuss selected terminologies while focusing on the most commonly adopted smart home platforms. We will then later examine the imposing risks of smart home devices that are connected to cloud infrastructure based on literature and case-study reviews, and assess a handful of security measures to mitigate associated privacy risks. The main proposal within this realm will be to deploy \textit{Home Assistant} as a smart home platform and thereby omit the use of cloud connections for controlling smart home appliances altogether. To emphasize the value proposition of this approach, a major section of this paper will explore how Home Assistant operates and discuss the different design philosophy compared to competing platforms, as well as highlight important topics for deploying this system within one's home. 
+With a view to the aforementioned topics, this paper will start off with a brief introduction to smart home systems and discuss selected terminologies while focusing on the most commonly adopted smart home platforms. We will then later examine the imposing risks of smart home devices that are connected to cloud infrastructure based on literature and case-study reviews, and assess a handful of security measures to mitigate associated privacy risks. The main proposal within this realm will be to deploy \textit{Home Assistant} as a smart home platform and thereby omit the use of cloud connections for controlling smart home appliances altogether. To emphasize the value proposition of this approach, a major section of this paper will explore how Home Assistant operates and compare this system to competing smart home platforms, as well as highlight important topics for deploying Home Assistant within one's home. 
 
 After elaborating this proposal, a small experiment with a few participants will be conducted in order to investigate the entrance barriers for new users who want to deploy Home Assistant on their own. For this the on-boarding process for setting up  Home Assistant will be assessed by the participants. Their experience and feedback will then be used to estimate if the value proposition of Home Assistant would be appealing to a broader scope of users.
 
@@ -28,7 +28,7 @@ After elaborating this proposal, a small experiment with a few participants will
 A \textit{Smart Home System} is the superset of connected devices and technologies that represent the physical and logical subtleties that make up the \textit{Smart Home}, but is most commonly used as a synonym for the \textit{Smart Home Platform} that handles communication between multiple devices and hosts the respective user interface.
 This terminologies do not really refer to the same concepts, since controlling devices via multiple platforms could have some benefits, e.g. different household residents want to use their respective Android or iOS native smart home platforms, but separating devices into multiple systems and therefore isolating them from communicating with another, will most often not be desirable.
 
-A major point of differentiation of smart home systems is the medium that connects devices together. While many alternatives exists for wireless systems, \textit{KNX} dominates the market for wired systems \cite{BertkoChris2017HSH:}. Since the latter must be planned in advance and requires physical connections between devices, they are more expensive than wireless systems and are only deployable within the scope of a major renovation or construction of a new building \cite{BertkoChris2017HSH:}. Therefore, wireless systems are particularly interesting for homeowners who want to upgrade their existing home to a smart home. Moreover this approach has the benefit that expanding the system is easier to accomplish as no new wires are required. For this reason we will focus on wireless systems when discussing smart home platforms, but first of all we will explore what a smart home is.
+A major point of differentiation of smart home systems is the medium that connects devices together \cite{ReviewOfSmartHomes-6177682}. While many alternatives exists for wireless systems \cite{ReviewOfSmartHomes-6177682}, \textit{KNX} dominates the market for wired systems \cite{BertkoChris2017HSH:}. Since the latter must be planned in advance and requires physical connections between devices, they are more expensive than wireless systems and are only deployable within the scope of a major renovation or construction of a new building \cite{BertkoChris2017HSH:}. Therefore, wireless systems are particularly interesting for homeowners who want to upgrade their existing home to a smart home. Moreover this approach has the benefit that expanding the system is easier to accomplish as no new wires are required. For this reason we will focus on wireless systems when discussing smart home platforms, but first of all we will explore what a smart home is.
 
 \subsection{What is a Smart Home?}
 At its core a \textit{Smart Home} is an interconnected network of home appliances that enables the home owner to perform actions that they would not be able to perform, in a comparative form, without the ability of the devices to communicate with each other. This does not necessarily require the user to perform manual actions, such as operating a light switch, but rather means that some trigger (like a switch or a sensor) can have an effect on a wider scope of appliances than itself is physically connected with. A common example for this is a self-regulating heating system, where temperature sensors control when a room needs to be heated, but the system is interrupted by smart contact sensors if the windows are opened \cite{BertkoChris2017HSH:}. The same system can be later expanded by setting a time trigger to warm up the bathroom before a resident gets up in the morning \cite{Tuohy2023SHP}.
@@ -37,14 +37,14 @@ For this reason smart homes are often referred to as "intelligent living"\cite{B
 
 In addition to automating actions, this also enables the homeowner to repurpose their devices to perform tasks they were not supposed to perform initially. Given that some subset of devices, which typically are associated to be used only by residents (e.g. TVs or lights), communicate within this network, clever use of automations based on triggers like the current time can be used to create a simple presence simulation \cite{BertkoChris2017HSH:}, which creates the illusion of activity within a home and, therefore, fools outsiders to believe that the home would be occupied at the moment.
 
-This combination of capabilities shows the \textbf{emergent property} of smart homes, meaning that new utility can be created by re-contextualising the existing environment and leveraging the individual feature-sets of devices.
+This combination of capabilities shows the \textbf{emergent property} of smart homes, meaning that new utility can be created by re-contextualising the existing environment and leveraging the individual feature-sets of devices. Consumers perceive this property as the modularity of smart home systems, which has a great influence on the perception of the value of smart home \cite{TangRuiyang2021SoPE}.
 
 In some sense a Smart Home can be viewed as the "[...] natural evolution of our homes. A smart home is not fundamentally different from a 'regular' home - it is just the improvement of one."\cite{Tuohy2023SH}. In fact, smart homes are not a new technology or a sudden technological development. We have been putting computers into home appliances for more than a decade \cite{Tuohy2023SH} and thus laying the foundation for the interconnected world in which we live today. What started with devices such as light bulbs, outlets, or thermostats led to the development of doorbells, locks, and vacuums, all controllable from a smartphone \cite{Tuohy2023SH}.
 
 Like the uniqueness of physical houses, two distinct smart homes will always differ from each other. Although they may share certain properties, one should not imagine building a smart home as a normed operation. While a house must have an entrance and probably will have some windows, a smart home must have a common communication protocol and likely will have some form of user-interaction interface, but the physical location and material of that house windows will be determined by the preferences of the homeowner. Likewise the preferences for the visual representation of the user interface, or deployed technologies, will be different on a home to home basis depending on the requirements and needs of the homeowner. Therefore, smart homes can fulfil different purposes and \textbf{ operate at different levels of complexity} according to the preferences, interests, and technical proficiency of their owner.
 
 \subsection{Smart Home Platforms} \label{sec:Smart Home Platforms}
-The \textit{Smart Home Platform} is a software framework that provides services to a smart home that enables the execution of actions with higher levels of complexity such as automations, serves as an organisational layer of abstraction (e.g. to group devices together), and acts as a central hub for managing smart devices. One of its core tasks is to handle communication between devices that use different communication protocols or follow different specifications from different manufacturers \cite{Tuohy2023SHP}. Moreover smart home platforms often provide a graphical user interface in the form of an smartphone-app or web interface for controlling devices and hosts some notification system to inform the user about changes or alerts. The organisation of devices is most often done by grouping them by their location into \textit{rooms} that act as a digital counterpart of the physical house \cite{BertkoChris2017HSH:}.
+The \textit{Smart Home Platform} is a software framework that provides services to a smart home that enables the execution of actions with higher levels of complexity such as automations, serves as an organisational layer of abstraction (e.g. to group devices together), and acts as a central hub for managing smart devices. One of its core tasks is to handle communication between devices that use different communication protocols \cite{ReviewOfSmartHomes-6177682} or follow different specifications from different manufacturers \cite{Tuohy2023SHP}. Moreover smart home platforms often provide a graphical user interface in the form of an smartphone-app or web interface for controlling devices and hosts some notification system to inform the user about changes or alerts. The organisation of devices is most often done by grouping them by their location into \textit{rooms} that act as a digital counterpart of the physical house \cite{BertkoChris2017HSH:}.
 
 The most popular smart home platforms for consumers are developed by large tech companies \cite{Tuohy2023SHP} and are well known for their simple installation and easy integration of popular devices. Without particular order those \textit{mainstream smart home platforms} are:
 \begin{itemize}
@@ -56,16 +56,17 @@ The most popular smart home platforms for consumers are developed by large tech 
 
 Most smart home platforms require a physical hardware component such as a \textit{hub} \cite{BertkoChris2017HSH:} that can host these services, but many manufacturers combine this with some other type of appliance such as a smart speaker \cite{Tuohy2023SHP}, but sometimes they are just small pucks that sit in an outlet somewhere in your home \cite{Tuohy2023SHH}. In any case, they act as the brain of the smart home platform and are essential for their operation.
 
-In addition, hubs commonly incorporate radios for various wireless technologies that are required for local communication with your devices \cite{Tuohy2023SHH}. Local connectivity means that your smart home could be operated without a cloud connection and therefore stay operational in the event of an internet outage. However, not every smart home platform is equally independent from their manufacturers cloud. Especially voice assistants tend to be rendered useless without a cloud connection. Although some basic voice commands will most often work offline, more complex tasks require an active internet connection. The importance of cloud connectivity for e.g. Alexa is apparent on their support site. The word "cloud" is mentioned 76 times in their roughly 18-page long FAQ-section about the operations of their voice assistant \cite{AmazonAlexaFAQ}.
+In addition, hubs commonly incorporate radios for various wireless technologies that are required for local communication with your devices \cite{Tuohy2023SHH}. Local connectivity means that your smart home could be operated without a cloud connection and therefore stay operational in the event of an internet outage. However, not every smart home platform is equally independent from their manufacturers cloud. Especially voice assistants tend to be rendered useless without a cloud connection. Although some basic voice commands will most often work offline, more complex tasks require an active Internet connection. The importance of cloud connectivity for e.g. Alexa is apparent on their support site. The word "cloud" is mentioned 76 times in their roughly 18-page long FAQ-section about the operations of their voice assistant \cite{AmazonAlexaFAQ}.
 
 A common property of three of the four above-listed smart home platforms (with Alexa being the exception) is that they are developed by companies which also develop smartphones. They are also naively installed on those mobile devices. Although this in itself may not be significant for their success reasons, there might be an incentive for users to deploy the smart home platform that is developed by their phone manufacturer.
 
 Besides aforementioned platforms, there are many other alternatives that are direct competitors or have a focus on specific use cases. \textit{Home Assistant} is one of them and will be assessed in detail in section \ref{sec:Home Assistant}.
 
+The choice of platform also determines the smart home community in which a user is likely to participate, as they may want to share their experiences with other consumers. This community influences the user's perceived value of smart home devices by creating social value through inter-consumer cooperation efforts \cite{TangRuiyang2021SoPE}.
 
 
 \subsection{Considerations when starting with Smart Home}
-What should be clear by now is that building a smart home is not an easy task. Many decisions you make along the way can influence your capabilities in the future, and likewise the environments, that is your home, can change drastically. Even third parties can affect your smart home system. The devices you deploy will likely receive updates throughout the years which can benefit you, but can also change their software in such a way that you have to adapt your operations.
+It should be clear by now that building a smart home is not an easy task. Many decisions made along the way can influence the user's capabilities in the future, and likewise the environment in a home can change drastically. Even third parties can affect a smart home system. The devices deployed today will likely receive updates throughout the years, which can benefit the user, but can also change the software in such a way that the current way of operations has to be adapted.
 
 One of the most important initial considerations will be to decide \textbf{which platform to use} \cite{Tuohy2023SHP}, since this will determine \textit{how one interacts} with the smart home and \textit{what technologies it can support}.
 
@@ -75,24 +76,48 @@ In addition, the user has to ask themselves \textbf{what features they need} the
 
 Above all \textbf{users have to trust a platform} and thus the manufacturer who is developing the platform of their choice, since they are likely dependent on the cloud infrastructure of the providers for e.g. processing voice requests (see section \ref{sec:Smart Home Platforms}), store data like video footage \cite{Kastrenakes2019HKSC} or analyse user data to give them insight into their behaviour \cite{Liao2018AH} and energy consumption \cite{SamsungSmartThingsEnergy}.
 
-But what if this would not be necessary at all? The scope of this paper is to introduce an alternative to these cloud-based mainstream platforms: \textit{Home Assistant}. Therefore we will make the assumption that \textit{users do not want to trust manufacturers with their data} and explore if smart home can work without a cloud that is operated by third parties. In order to examine how smart home devices can endanger the privacy and security of users, the next major section will assess associated risks that cloud-based devices may impose on smart home systems and their users.
+However, \cite{ZhengSerena2018UPoS} shows that users seem to priorities convenience and connectivity when selecting smart home devices. Privacy concerns are infrequent among users, as they typically just assume that their privacy is protected by the manufacturers. This decision is rarely based on evidence, but leads users to buy into potential privacy risks as machine learning can reveal sensitive information from usage data \cite{ZhengSerena2018UPoS}.
+
+But what if trusting manufacturers with protecting privacy data in the cloud would not be necessary at all? The scope of this paper is to introduce an alternative to these cloud-based smart home platforms: \textit{Home Assistant}. Therefore we will make the assumption that \textit{users do not want to trust manufacturers with their data} and explore if smart home can work without a cloud that is operated by third parties. In order to examine how smart home devices can endanger the privacy and security of users, the next major section will assess associated risks that cloud-based devices may impose on smart home systems and their users.
 
 \newpage
 
 %% Section 3 - Risk Analysis
 
 \section{Risks of Cloud-Based Smart Home Devices}
-Information security (InfoSec) is a common foundation in many it-systems to ensure basic security requirements. Likewise, smart home systems should comply with these principles and aim to ensure \textbf{Confidentiality}, \textbf{Integrity} and \textbf{Availability} of services and data within the smart home. Those requirements are reasonable to satisfy since devices are likely to be exposed to various threats from inside and outside the home network given that they often will have internet access \cite{SecurityConsiderations-7354752}.
+Information security (InfoSec) is a common foundation in many it-systems to ensure basic security requirements. Likewise, smart home systems should comply with these principles and aim to ensure \textbf{Confidentiality}, \textbf{Integrity} and \textbf{Availability} of services and data within the smart home \cite{SecurityConsiderations-7354752}. Those requirements are reasonable to satisfy since devices are likely to be exposed to various threats from inside and outside the home network given that they often will have internet access \cite{SecurityConsiderations-7354752}.
 
 %In the context of smart homes
 
 This section will focus on curated cases where cloud-based smart home devices endanger these foundational principles. Cloud connections undoubtedly can improve the convenience of smart home systems, but users have to consider potential drawbacks when deploying third-party services.
 
 \subsection{Implications of Public Server Connections}
+\label{sec:implications-server-connections}
 Granting smart appliances internet access enables them to establish a connection to external services, such as their manufacturers cloud. Although this communication may be desired by the user for receiving external information, these devices can also deliver their gathered information to outside services. Since some devices collect sensitive data, some users may therefore have concerns about the deployment of smart home devices within their home \cite{ImprovingPrivacyControl-8514198}. This perceived privacy encroachment is often enhanced by nonintuitive and nontransparent device configuration options. Only a few smart home devices allow one to customise the storage locations of collected data and frequently deploy \textit{Zero-Conf configuration processes}, where the manufacturer enforces default security and privacy configurations \cite{ImprovingPrivacyControl-8514198}. Moreover all of this has to be configured on a device-on-device basis what makes configuring large deployments time consuming when a user wants to deviating from the default configuration.
 
-An often overlooked risk of cloud-dependent smart home devices is the eventuality that the device's manufacturer could turn off their servers any day. This exact scenario is what happened in 2016 to users of a smart home hub made by \textit{Revolv} which had been acquired by \textit{Nest}, a company operated by Google. They decided to drop their support of Revolv products which effectively turned their devices into e-waste overnight \cite{Proctor2020BH}. Revolv's FAQ page declared that all services will be terminated, their app will no longer open, and the hub will no longer be operational \cite{Gilbert2016Nest}. A Revolv user named Arlo wrote an article about his experience on \textit{Medium} and stated: "\textit{On May 15th, my house will stop working. My landscape lighting will stop turning on and off, my security lights will stop reacting to motion, and my home made vacation burglar deterrent will stop working. This is a conscious intentional decision by Google/Nest.}" \cite{Gilbert2016Nest} \newline
-This case shows the potential dangers of cloud dependency in smart home systems for availability and longevity of devices. Not every device will stop working once they can not make a connection with their manufacturers cloud, but the services related to it will terminate overnight once the company pulls the plug of their servers. Additionally, the same consequences would apply if the users internet connection goes down or the manufacturer faces temporary connection issues \cite{BertkoChris2017HSH:}. Therefore, users should ask themselves if they want to blindly trust any company they deploy devices from within their smart home.
+An often overlooked risk of cloud-dependent smart home devices is the eventuality that the device's manufacturer could turn off their servers any day. This exact scenario is what happened in 2016 to users of a smart home hub made by \textit{Revolv} which had been acquired by \textit{Nest}, a company operated by Google. They decided to drop their support of Revolv products which effectively turned their devices into e-waste overnight \cite{Proctor2020BH}. Revolv's FAQ page declared that all services will be terminated, their app will no longer open, and the hub will no longer be operational (see figure \ref{fig:Revolv-FAQ-Services}) \cite{Gilbert2016Nest}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.65\linewidth]{Bachelorarbeit/img/revolv-faq-service.png}
+    \caption{Revolv FAQ about their services \cite{Gilbert2016Nest}}
+    \label{fig:Revolv-FAQ-Services}
+\end{figure}
+
+A Revolv user named Arlo wrote an article about his experience on \textit{Medium} and said: \blockquote{\textit{On May 15th, my house will stop working. My landscape lighting will stop turning on and off, my security lights will stop reacting to motion, and my home made vacation burglar deterrent will stop working. This is a conscious intentional decision by Google/Nest.} \cite{Gilbert2016Nest}}
+
+This case shows the potential dangers of cloud dependency in smart home systems for availability and longevity of devices. Not every device will stop working once they can not make a connection with their manufacturers cloud, but the services related to it will terminate overnight once the company pulls the plug of their servers. 
+
+A more recent example of this happened in 2024 when \textit{Spotify} decided to discontinue \textit{Car Thing}, a product designed to control Spotify in the car that was produced in 2022. Their FAQ site now suggests to simply dispose of the product (see figure \ref{fig:Spotify-FAQ-CarThing}) \cite{OpenHomeBlog_CloudProducts}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.65\linewidth]{Bachelorarbeit/img/spotify-throw-away.png}
+    \caption{Spotify FAQ for Car Thing \cite{OpenHomeBlog_CloudProducts}}
+    \label{fig:Spotify-FAQ-CarThing}
+\end{figure}
+
+Additionally, the aforementioned consequences would also apply if the user's Internet connection goes down or the manufacturer faces temporary connection issues \cite{BertkoChris2017HSH:}. Therefore, users should carefully consider if they want to blindly trust any company they deploy devices from within their smart home.
 
 \subsection{Unauthorized Access to Smart Home Devices}
 Features like cloud storage might be perceived as convenient by smart home users, but imply that the collected data is not physically owned by them. Depending on the nature of the stored data and the technologies used to secure it this could have more or less severe consequences.
@@ -108,26 +133,35 @@ Smart home voice assistants are known to have many attack vectors and various pr
 
 Voice Assistants offer a unique way of interacting with smart home devices with the capability to respond to voice commands, allowing the user a hands-free operation of their smart home \cite{SHPA-10.1145/3412383}. To achieve this they wait for a predefined \textit{wake-word} and record what the user says after that. This recording is then sent to a compute node which analysis the data using \textit{Natural Language Processing} for identifying the users intent that eventually can be used as input for an artificial intelligence to issue following actions \cite{SHPA-10.1145/3412383}.
 
-This process involves \textbf{two critical points of failure} that can endanger the privacy of users. First as stated in \cite{SHPA-10.1145/3412383} the voice assistant is "\textit{Always On, Always Listening}". The wake-word can be said accidentally or falsely recognised by the device due to any other phonetically similar word during an unrelated conversation. This would trigger the voice assistant to record the following conversation, which consequently \textit{will then be uploaded to the internet} \cite{SHPA-10.1145/3412383}. This is because the second critical point of failure is the involvement of the manufacturers cloud. Almost all voice assistants are internet-based systems that process most of their voice processing in their manufacturers cloud, where, moreover, they store transcripts or recording for improving their model. In fact, only the wake-word is recognised locally on the device \cite{SHPA-10.1145/3412383}\cite{BertkoChris2017HSH:}.
+This process involves \textbf{two critical points of failure} that can endanger the privacy of users. First as stated in \cite{SHPA-10.1145/3412383} the voice assistant is "\textit{Always On, Always Listening}". The wake-word can be said accidentally or falsely recognised by the device due to any other phonetically similar word during an unrelated conversation. This would trigger the voice assistant to record the following conversation, which consequently \textit{will then be uploaded to the Internet} \cite{SHPA-10.1145/3412383}. This is because the second critical point of failure is the involvement of the manufacturers cloud. Almost all voice assistants are Internet-based systems that process most of their voice processing in their manufacturers cloud, where, moreover, they store transcripts or recording for improving their model. In fact, only the wake-word is recognised locally on the device \cite{SHPA-10.1145/3412383}\cite{BertkoChris2017HSH:}.
 
 The implications of this cloud communication and storage of user data were already discussed in the previous sections, and similar concerns arise when reviewing incidents related to voice assistants. In 2018 one specific case was covered widely in the media where Amazon's \textit{Alexa} sent a recording of private conversations to a random contact of a user without being explicitly asked to do so \cite{Horton2018AlexaRecordsConversation}. A representative of Amazon explained: "Echo woke up due to a word in background conversation sounding like 'Alexa.' Then, the subsequent conversation was heard as a 'send message' request. [...]" \cite{Horton2018AlexaRecordsConversation}. The company then declared the case as a malfunction. Later in the same year, an Amazon customer received 1,700 audio files that contained recordings of strangers' voice requests made to Alexa. The information within the audio files together with a Facebook and Twitter search was enough to identify the stranger, who had not been contacted about the incident by Amazon before gaining public attention \cite{Ingber2018AlexaAudioFiles}. Although those two cases are rare incidents, they show what data voice assistants collect and possibly can expose about their users.
 
+
 %% Section 4 - Security Measurements
 
+\section{Securing a Smart Home against Cloud-Risks}
+This section will discuss three approaches to reduce user exposure to some of the potential negative consciences of cloud-based smart home devices that were highlighted above.
 
-\section{Preemptive Security Measures}
-This section will discuss various ways how to combat some of the previously explored negative consciences of cloud-based smart home devices.
+\subsection{Avoiding Cloud Connections}
+One straight forward approach how a user can reduce cloud connections within their smart home is to deactivate cloud services in the settings of their deployed devices. If it stays operational and the user experiences no drawbacks then the cloud service was optional to begin with and therefore can be easily disabled. This is the case for services like \textit{out of home control}, where users can access their smart home from outside their residential home network. Deactivating those will only impact the user when they need to control the specific device remotely and have no alternative means of control through another smart home controller. 
 
-\subsection{Deactivating Cloud Connections}
-One straight forward approach how a user can reduce cloud connections within their smart home is to deactivate cloud services in the settings of their deployed devices. If it stays operational and the user experiences no drawbacks then the cloud service was optional to begin with and therefore can be easily disabled. This is the case for services like \textit{out of home control}, where users can access their smart home from outside their residential home network. Deactivating those will only impact the user when they need to control the specific device while they are away. 
+While some manufacturers, like \textit{Bosch} \cite{BoschHelpSmartController} or \textit{Shelly} \cite{ShellySmartControlApp}, who both develop various smart home devices for controlling lights, shutters and indoor climate controller, will allow users to disconnect their devices from their cloud services, others like \textit{Philips Hue} will have mandatory cloud connections \cite{Tuohy2023PhiliphHue}. This shows that combating cloud connections as an afterthought could potentially be troublesome, as not every device will allow the user to disconnect from all cloud services entirely.
 
-While some manufacturers, like \textit{Bosch} \cite{BoschHelpSmartController} or \textit{Shelly} \cite{ShellySmartControlApp}, who both develop various smart home devices for controlling lights, shutters and indoor climate controller, will allow users to disconnect their devices from their cloud services, others like \textit{Philips Hue} will have mandatory cloud connections \cite{Tuohy2023PhiliphHue}.
-
-\subsection{Vendor Selection}
+Therefore, considering cloud connections before purchasing a fleet of smart home devices will yield better results to limit the overall amount of outside connections. Carefully selecting the smart home device manufacturers that the user trusts will also help avoid future frustrations in this domain. Moreover, it could be wise to consider if any device without a local API would even be worth deploying within a smart home, since local control will at least work for the entirety of the device's lifespan. 
 
 \subsection{IoT Network Security}
+A common security approach to control the network traffic of devices is to establish VLANs that essentially operate as separated virtual networks and to implement powerful firewall rules to block unwanted traffic. Those techniques are also suitable for smart homes to protect against various threats \cite{SH-NetworkSecurity-9990734}. Furthermore, network segmentation can be used to block cloud connections on the network layer by setting up an \textit{IoT-VLAN} and configuring separate firewall rules for this segment. Smart home devices can be placed on this network, which then can be used not only to isolate devices from the Internet, but also to protect personal devices or sensitive data on the network from being accessed by IoT devices \cite{BMI-SmartHomeSecurity}. This can also be taken one step further by deploying \textit{Private VLANs} that isolate devices completely from one another, so that all traffic must go through the router \cite{SH-NetworkSecurity-9990734}.
+
+Some modern routers provide the option to easily configure a separate WLAN network to integrate only IoT devices \cite{BMI-SmartHomeSecurity}. Alternatively, the \textit{Guest-Wifi} often serves a similar purpose. However, setting up firewall rules to block smart home devices from connecting to their cloud server requires some technical knowledge from the user. Therefore, network security can be difficult for smart home novices to configure.
+
+Even so, blocking network traffic can be very effective when devices offer a local API but do not allow the user to deactivate all cloud connections.
 
 \subsection{Matter Protocol}
+The \textit{Matter} Protocol is an open-source connectivity standard developed by the \textit{connectivity standards alliance} for controlling smart home devices \cite{Matter-Security&Privacy}. It is supported by major industry leaders such as Apple, Google, Amazon and Samsung with the goal of creating an ecosystem where smart home devices can communicate with another regardless of their manufacturer \cite{Matter-10288747}. It has been designed with state of the art security and privacy principles in mind which among others require Matter devices to be fully controllable locally \cite{Matter-Security&Privacy}.
+
+While Matter does not rule out cloud connections \cite{Matter-Security&Privacy} it ensures that its devices will still be operational in the event that a manufacturer shuts down their cloud services. Therefore, endorsing the Matter protocol elevates the potential danger to end with abandoned devices like in the case of Revolv or Spotify presented in section \ref{sec:implications-server-connections}.
+
 \newpage
 
 %% Section 5 - Home Assistant
@@ -135,7 +169,7 @@ While some manufacturers, like \textit{Bosch} \cite{BoschHelpSmartController} or
 \section{Alternative to cloud-based Smart Home Systems: Home Assistant} \label{sec:Home Assistant}
 \textit{Home Asssitant} is a community-driven \textbf{open source} smart home platform that puts \textbf{local control} and \textbf{privacy first}. It has been designed to run on local servers and mini computers like the \href{https://www.raspberrypi.com/}{Raspberry PI}\footnote{https://www.raspberrypi.com/} without depending on the cloud \cite{HomeAssistant_Startpage}.
 
-The project was started by Paulus Schoutsen in 2013 with the initial aim to take greater control of the Philips Hue devices that he had purchased at that time. Over the course of the coming years and with the help of mainly volunteer contributors, Home Assistant grew to become one of the leading smart home platforms \cite{OpenHomeFoundation_About} and most widely used home automation system for DIY enthusiasts.
+The project was started by Paulus Schoutsen in 2013 with the initial aim to take greater control of the Philips Hue devices that he had purchased at that time. Over the course of the coming years and with the help of mainly volunteer contributors, Home Assistant has grown to become one of the leading smart home platforms \cite{OpenHomeFoundation_About} and the most widely used home automation system for DIY enthusiasts.
 
 Home Assistants fundamental vision is to build a smart home that protects the values of what they call \textbf{The Open Home}:
 
@@ -332,7 +366,7 @@ Cards can also be configured to the users liking by adding additional control op
 \begin{figure}[H]
     \centering
     \includegraphics[width=.95\linewidth]{img/ha-dashboard-demo-editing-card.png}
-    \caption{Interactive HA dashboard demo - Editing of a card in the dashboard \cite{HomeAssistant_Dashboard_Demo}}
+    \caption{Interactive HA dashboard demo - Editing of a card on the dashboard \cite{HomeAssistant_Dashboard_Demo}}
     \label{fig:HA-Dashboard-Demo-Editing-Card}
 \end{figure}
 
@@ -429,8 +463,8 @@ The creators of Home Assistant also developed \href{https://esphome.io/index.htm
 
 The aim of this chapter is to examine whether Home Assistant, as a locally hosted service, delivers a comparable set of capabilities in relation to traditional smart home platforms. For this the platforms were tested in an experiment and compared using a utility analysis.
 The traditional smart home platforms tested in this comparison are Apple Home, Google Home, Samsung Smart Things and Amazon Alexa. Capabilities were evaluated by comparing the available \textbf{control options}, the offered \textbf{feature set}, the potential for configuring powerful \textbf{automations} and the abilities of the \textbf{voice assistant }associated with the respective smart home platform.
-Control options and Features represent \textit{active tools} for users to interact with their smart home (e.g. controlling, monitoring, or gathering information), while automations and voice assistant represent \textit{passive tools}, where the smart home executes actions on behalf of the user.
-Although this framework does not cover all dimensions of smart home, its aim is to cover a basic smart home usage scenario.
+Control options and Features represent \textit{active tools} for users to interact with their smart home (e.g. controlling, monitoring, or gathering information), while Automations and Voice Assistant represent \textit{passive tools}, where the smart home executes actions on behalf of the user.
+Although this framework does not cover all dimensions of smart home technology, such as supported protocols, reliability or system cost, its aim is to cover a basic smart home usage scenario. The mentioned attributes were furthermore deliberately ignored for this comparison, since they are heavily influenced by the protocols in use as shown in \cite{SHS-Overview&ComparativeAnalysis-8718722}.
 
 All smart home platforms were tested with at the time of writing (24th of June 2024) officially supported (not deprecated) devices with the latest firmware installed. Except of the device used for Amazon Alexa, all devices are still sold by their respective companies and therefore could be newly deployed by a user who starts with smart home today.
 
@@ -504,8 +538,7 @@ Additional insight on the distinct smart home platforms can be found in section 
         Time based trigger & Turn on the garden lights at 8pm.\\ \addlinespace
         Location based trigger & Lock the door when the user leaves the house.\\ \addlinespace
         Send notifications based on events & Send a notification if the door gets opened after 10pm.\\ \addlinespace
-        Simple Conditional Logic & Turn a light on if motion gets detected after 10pm.\\ \addlinespace
-        Follow-up actions & Turn a light on, wait until 5 minutes passed during which no motion has been detected and turn the light off again.\\
+        Simple Conditional Logic & Turn a light on if motion gets detected after 10pm.\\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -542,7 +575,7 @@ Apple Home (AH) has been tested using a Apple HomePod mini with the firmware 17.
 AH exclusively offers apps for Apple devices and therefore excludes household members that use Android smartphones or Windows PCs. Its voice assistant is called \textit{Siri} which can execute some voice commands locally and communicates with iPhones on the same network to receive personal information, but depends on external servers for more complex tasks. Out-of-home control is available through Appels iCloud Service.
 
 \paragraph{Features}
-In terms of features HA mainly focuses on basic capabilities. Devices of the same type can be grouped to be displayed as a single entity, for example, the individual lights of a chandelier, and scenes can be created to control multiple devices simultaneously. However, more complex features, such as viewing the state history of devices or energy monitoring, are currently missing completely.
+In terms of features HA mainly focuses on basic capabilities. Devices of the same type can be grouped to display as a single entity, for example, the individual lights of a chandelier, and scenes can be created to control multiple devices simultaneously. An event history is available, but this is limited to only include smart locks and garage doors. However, more complex features, such as viewing the state history of devices or energy monitoring, are currently missing.
 
 \paragraph{Automations}
 AH supports the most common event triggers for automations like people arriving/leaving a place, accessories changing their state (being controlled or sensors detecting something) and time-based events. The action flow that can be executed within an automation is limited to setting the state of devices. Logical operations like if-then, conditionally waiting on another event or for time to pass are not supported. The only exception are lights, which can be turned off again after a set amount of time.
@@ -556,7 +589,7 @@ Google Home (GH) has been tested using a Google Nest Mini with the firmware 2.57
 
 \paragraph{Control Options}
 GH is mainly focused on controlling smart home devices with their voice assistant \textit{Google Assistant}.
-Out-of-home control is available through the Google Cloud. However, most smart home devices stop working once the hub loses its connection to the internet. Presumably only devices that directly connect to the phone, such as some smart TVs, remain controllable. Google recently confirmed that they are working on implementing some form of local control \cite{Reddit_r/GoogleHome2023OfflineMode}.
+Out-of-home control is available through the Google Cloud. However, most smart home devices stop working once the hub loses its connection to the Internet. Presumably only devices that directly connect to the phone, such as some smart TVs, remain controllable. Google recently confirmed that they are working on implementing some form of local control \cite{Reddit_r/GoogleHome2023OfflineMode}.
 
 \paragraph{Features}
 Scenes are not directly integrated into the GH app. External applications can provide scenes to the Google Assistant API \cite{GoogleDeveloper2023ScenesGuide}, but it is not supported to create new scenes within the GH app. Third-party integrations are available with Google Cloud. Energy monitoring is only available for thermostats, but not for power plugs. This means that heat can be monitored, but electricity can not.
@@ -572,17 +605,16 @@ GH is heavily focused on using its voice assistant as the primary interaction in
 Samsung Smart Things (SST) has been tested using a Samsung The Frame TV with firmware 1455.3.
 
 \paragraph{Control Options}
-SST does not have a distinct voice assistant but allows users to connect external voice services like Samsung Bixby, Google Assistant or Amazon Alexa. Samsung Bixby is not directly connected with SST and only available on external devices like Samsung smartphones or Samsung refrigerators. Therefore, Bixby will not be included as SSTs voice assistant in this comparison.
-SST also provides a web interface for controlling devices from the browser. In the event of an internet outage SST behaves inconsistently. Some automations work offline on the hub, but others require a cloud server \cite{Reddit_r/SmartThings2024OfflineMode}.
+SST does not have distinct voice assistant satellites like, for example, an Amazon Echo Dot, but allows users to connect external voice services like Samsung Bixby, Google Assistant or Amazon Alexa. SST also provides a web interface to control devices from the browser. In the event of an Internet outage, SST behaves inconsistently. Some automations work offline on the hub, but others require a cloud server \cite{Reddit_r/SmartThings2024OfflineMode}.
 
 \paragraph{Features}
-SST provides every feature defined in this comparison. The event history allows to filter for specific devices and therefore its implementation counts as a device state history.
+SST provides every feature defined in this comparison. The event history allows to filter for specific devices and therefore its implementation counts as a device state history, although it is not explicitly labeled as such.
 
 \paragraph{Automations}
 Automations can be triggerd based on manual actions, time, device state, location, weather condition and its integrated security mode (which mimics an alarm system). SST allows to set triggers as preconditions that have to be fulfilled for other triggers to execute the automation.
 
 \paragraph{Voice Assistant}
-As mentioned before SST does not provide a dedicated voice assistant. However, Alexa or Google Assistant can be integrated into SST.
+As mentioned above, SST does not provide dedicated voice assistant satellites and Samsung Bixby is only available on mobile devices such as smartphones or built into Samsung's own home appliance devices such as refrigerators or soundbars that can not be as easily placed in every room of a house as typical voice satellites. Since it lacks this characteristics, Bixby will not be treated as SSTs voice assistant. Instead, it will be assumed that integrating Google Assistant or Alexa with SST is the more common approach a user would take when building a smart home with this platform. For this reason, Google Assistant will be used together with Samsung Smart Things in this comparison.
 
 \newpage
 \subsubsection{Amazon Alexa}
@@ -590,7 +622,7 @@ Amazon Alexa (AA) has been tested using a Amazon Echo (2nd Generation) with the 
 
 \paragraph{Control Options}
 AAs primary control interface is its voice assistant \textit{Alexa}.
-A major point of concern of this platform is that it stops working completely if the device loses internet connection. Even the smartphone app becomes unresponsive and not even local devices can be controlled through the app in this event. Out-of-home control is available through the Amazon Cloud.
+A major point of concern of this platform is that it stops working completely if the device loses Internet connection. Even the smartphone app becomes unresponsive and not even local devices can be controlled through the app in this event. Out-of-home control is available through the Amazon Cloud.
 
 \paragraph{Features}
 Out of the box AA offers many features and can even be heavily extended further with third-party integrations called \textit{Alexa-Skills}.
@@ -603,7 +635,7 @@ Based on various user reports on the amazon forums, AA cannot perform location-b
 The action flow of automations is similarly limited as in Apple Home, but AA requires a second automation for turning a light off again after it has been turned on by an automation.
 
 \paragraph{Voice Assistant}
-AA is primary developed as a voice assistant, and therefore it unsurprisingly excels at those tasks.
+AA is primary developed as a voice assistant, and therefore it unsurprisingly excels at those tasks. Since Samsung's marketing suggests
 
 \newpage
 \subsubsection{Home Assistant}
@@ -613,10 +645,10 @@ Home Assistant (HA) has been tested with version 2024.7 on a Raspberry~Pi~4. Det
 Home Assistant provides all control options of this comparison. While out-of-home control requires some additional configuration (see section \ref{sec:ha-remote-access}), it is not too difficult to set up.
 
 \paragraph{Features}
-HA also supports every feature of this comparison.
+HA also supports every feature of this comparison. The features of Home Assistant were elaborated thoroughly in its dedicated section.
 
 \paragraph{Automations}
-In addition to basic automation capabilities HA offers complex conditional logical and loops known from most programming languages. Despite that, automations can be configured using the UI using building blocks. See section \ref{sec:ha-automations} for furhter detail. 
+In addition to basic automation capabilities HA offers complex conditional logical and loops known from most programming languages. Despite that, automations can be configured using the UI using building blocks. See section \ref{sec:ha-automations} for furhter details. 
 
 \paragraph{Voice Assistant}
 The voice assistant of HA (\textit{Assist}) has been tested using a fully local installation of the required components that were described in section \ref{sec:ha-voice-assistant}. Overall it is the least capable of the voice assistants in this comparison. However, just like SST, HA can integrate with Google Assistant and Amazon Alexa, which can be a viable substitute if local processing is not a priority.
@@ -633,9 +665,9 @@ $$
 \textbf{Total Score} = \text{C-Score} + \text{F-Score} + \text{A-Score} + \text{V-Score}
 $$
 
-However, this total score should not be viewed as an indicator for how "good" a smart home platform is. The score only shows how rich in capabilities they are, given a basic usage scenario. Furthermore, the evaluation does not weight the importance of each feature, nor is every criteria equally distinct. Some of them are more similar to another than others and some features could be more important to user A than to user B.
+The results of this comparison can be found in table \ref{tab:comparison} on the next page. However, the total score should not be viewed as an indicator for how "good" a smart home platform is. The score only shows how rich in capabilities they are, given a basic usage scenario. Furthermore, the evaluation does not weight the importance of each feature, nor is every criteria equally distinct. Some of them are more similar to another than others and some features could be more important to user A than to user B. Moreover, it should be noted that the criteria were selected in such a way that subtle differences between the platforms can be observed, while unique features were deliberately omitted, so that no platform would artificially score higher than others due to supporting niche use cases. The goal of the comparison is to compare Home Assistant against the traditional smart home platform and not to determine the smart home platform with the most capabilities. Therefore, this should not be viewed as a ranking system.
 
-Furthermore, SST and HA can each use Google Assistant and Amazon Alexa as their voice assistant, which would alter the score of the configured system. However, for this comparison only the explicitly provided features of the platforms where considered. Therefore, SST could not score points for a voice assistant. This should be taken in consideration when comparing scores between smart home platforms.
+Furthermore, Samsung Smart Things and Home Assistant can each use Google Assistant and Amazon Alexa as their voice assistant, which would alter the score of the configured system. However, for this comparison Home Assistant will entirely be evaluated with an fully local setup, since the main proposal of this paper is to deploy Home Assistant as an alternative to cloud-based smart home systems. All other platforms have access to their entire cloud infrastructure.
 
 \noindent
 \paragraph{\textit{Note:}}
@@ -643,21 +675,22 @@ Furthermore, SST and HA can each use Google Assistant and Amazon Alexa as their 
 
 \begin{table}[H]
     \centering
-    \caption{Comparison of smart home platforms} \vspace{1.5ex}
+    \caption{Comparison of Smart Home Platforms} \vspace{1.5ex}
     \label{tab:comparison}
+    \begin{threeparttable}
     \begin{tabularx}{\textwidth}{| l | p{0.5\linewidth} | *{5}{>{\small\centering\arraybackslash}X|}}
         \cline{3-7}
         \multicolumn{2}{c |}{\multirow{2}{*}{}} & \multicolumn{5}{c |}{Smart Home Platforms} \\
         \cline{3-7}
         \multicolumn{2}{c |}{} & \textbf{AH} & \textbf{GH} & \textbf{SST} & \textbf{AA} & \textbf{HA} \\ \hline
-        \multirow{17}{*}{\rotatebox[origin=c]{90}{Active Tools}} & \multicolumn{6}{l |}{\rule{0pt}{3.5ex}\textbf{Control Options}} \\ \cline{2-7}
+        \multirow{19}{*}{\rotatebox[origin=c]{90}{Active Tools}} & \multicolumn{6}{l |}{\rule{0pt}{3.5ex}\textbf{Control Options}} \\ \cline{2-7}
         & Smartphone App & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\ \cline{3-7}
         & Cross Platform Apps & & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\ \cline{3-7}
         & Web Interface & & & \ding{51} & & \ding{51} \\ \cline{3-7}
-        & Voice Assistant & \ding{51} & \ding{51} & & \ding{51} & \ding{51} \\ \cline{3-7}
+        & Voice Assistant & \ding{51} & \ding{51} & \ \ding{51}\tnote{*} & \ding{51} & \ding{51} \\ \cline{3-7}
         & Offline-Control & \ding{51} & & \ding{51} & & \ding{51} \\ \cline{3-7}
         & Out-of-Home & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\ \cdashline{2-7}
-        & \textbf{C-Score} & 4 & 4 & 5 & 4 & 6 \\ \cline{2-7}
+        & \textbf{C-Score} & 4 & 4 & 6 & 4 & 6 \\ \cline{2-7}
         & \multicolumn{6}{l |}{\rule{0pt}{3.5ex}\textbf{Features}} \\ \cline{2-7}
         & Scenes & \ding{51} & & \ding{51} & \ding{51} & \ding{51} \\ \cline{3-7}
         & Automations & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\ \cline{3-7}
@@ -669,31 +702,38 @@ Furthermore, SST and HA can each use Google Assistant and Amazon Alexa as their 
         & Event Logs & & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\ \cline{3-7}
         & Energy Monitoring & & & \ding{51} & \ding{51} & \ding{51} \\ \cdashline{2-7}
         & \textbf{F-Score} & 4 & 5 & 9 & 7 & 9 \\ \hline
-        \multirow{12}{*}{\rotatebox[origin=c]{90}{Passive Tools}} & \multicolumn{6}{l |}{\rule{0pt}{3.5ex}\textbf{Automations}} \\ \cline{2-7}
+        \multirow{13}{*}{\rotatebox[origin=c]{90}{Passive Tools}} & \multicolumn{6}{l |}{\rule{0pt}{3.5ex}\textbf{Automations}} \\ \cline{2-7}
         & Time based trigger & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\ \cline{3-7}
         & Location based trigger & \ding{51} & \ding{51} & \ding{51} & & \ding{51} \\ \cline{3-7}
         & Send notifications based on events & \ding{51} & \ding{51} & \ding{51}  & \ding{51} & \ding{51} \\ \cline{3-7}
-        & Simple Conditional Logic & \ding{51} & \ding{51} & \ding{51} & & \ding{51} \\ \cline{3-7}
-        & Follow-up actions & & & & & \ding{51} \\ \cdashline{2-7}
-        & \textbf{A-Score} & 4 & 4 & 4 & 2 & 5 \\ \cline{2-7}
+        & Simple Conditional Logic & \ding{51} & \ding{51} & \ding{51} & & \ding{51} \\ \cdashline{2-7}
+        & \textbf{A-Score} & 4 & 4 & 4 & 2 & 4 \\ \cline{2-7}
         & \multicolumn{6}{l |}{\rule{0pt}{3.5ex}\textbf{Voice Assistants}} \\ \cline{2-7}
-        & Obtain external information & \ding{51} & \ding{51} & & \ding{51} & \\ \cline{3-7}
-        & Perform actions & \ding{51} & \ding{51} & & \ding{51} & \ding{51} \\ \cline{3-7}
-        & Set a reminder & \ding{51} & \ding{51} & & \ding{51} & \ding{51} \\ \cline{3-7}
-        & Set a timer & \ding{51} & \ding{51} & & \ding{51} & \ding{51} \\ \cline{3-7}
-        & Identify voice of household members & \ding{51} & \ding{51} & & \ding{51} & \\ \cdashline{2-7}
-        & \textbf{V-Score} & 5 & 5 & & 5 & 3 \\ \hline
-        \multicolumn{2}{r |}{\textbf{Total score}} & 17 & 18 & 18 & 18 & 23 \\ \cline{3-7}
+        & Obtain external information & \ding{51} & \ding{51} & \ \ding{51}\tnote{*} & \ding{51} & \\ \cline{3-7}
+        & Perform actions & \ding{51} & \ding{51} & \ \ding{51}\tnote{*} & \ding{51} & \ding{51} \\ \cline{3-7}
+        & Set a reminder & \ding{51} & \ding{51} & \ \ding{51}\tnote{*} & \ding{51} & \ding{51} \\ \cline{3-7}
+        & Set a timer & \ding{51} & \ding{51} & \ \ding{51}\tnote{*} & \ding{51} & \ding{51} \\ \cline{3-7}
+        & Identify voice of household members & \ding{51} & \ding{51} & \ \ding{51}\tnote{*} & \ding{51} & \\ \cdashline{2-7}
+        & \textbf{V-Score} & 5 & 5 & 5 & 5 & 3 \\ \hline
+        \multicolumn{2}{r |}{\textbf{Total score}} & 17 & 18 & 24 & 18 & 22 \\ \cline{3-7}
     \end{tabularx}
+    \begin{tablenotes}
+        \item[*] using Google Assistant 
+    \end{tablenotes}
+    \end{threeparttable}
 \end{table}
 
 \newpage
 
-With relation to the research question of this paper, this comparison shows that Home Assistant can indeed be a viable alternative to cloud-based smart home systems based on its capabilities. The primary weakness of Home Assistant at the moment is its voice assistant. However, comparing a locally hosted service with a cloud service in this context may not be entirely fair. Users who are open to using a cloud-based voice assistant can still integrate services like Google Assistant into Home Assistant, thus addressing this weakness.
+In relation to the research question of this paper, this comparison shows that Home Assistant can indeed be a viable alternative to cloud-based smart home systems based on its capabilities. The primary weakness of Home Assistant at the moment is its voice assistant. Although, comparing a locally hosted service with a cloud service may not be entirely fair. Users who are open to using a cloud-based voice assistant can still integrate services like Google Assistant into Home Assistant, thus addressing this weakness. In this configuration, Home Assistant would then show no shortcomings compared to the cloud-based smart home platforms.
+
+In terms of the defined capabilities, a fully local installation of Home Assistant is rivaled only by Samsung Smart Things. However, this comparison excludes human-focused attributes such as user-experience, which should be subject to future research.
 
 %% Section 6 - Experimente
 
 \section{Experiment: Adoption of Home Assistant}
+
+
 \newpage
 
 %% Section 7 - Conclusion
