@@ -1,0 +1,190 @@
+---
+title: "Bachelor Thesis"
+author: "Raphael Reichel"
+date: "2024-08-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE}
+library(tidyverse)
+library(readxl)
+library(leaflet)
+
+theme_R <- function() {
+  theme_bw() +
+  theme(
+    text = element_text(size=12),
+    plot.title = element_text(hjust = 0.5, margin = margin(0,0,20,0), face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.text = element_text(size=12, color = "black"),
+    axis.text.y = element_text(vjust = 0.5),
+    axis.title.x = element_text(margin = margin(15,0,0,0, unit="pt")),
+    axis.title.y = element_text(margin = margin(0,15,0,0, unit="pt")),
+    axis.ticks.length = unit(8, "pt"),
+    axis.minor.ticks.length = rel(0.6),
+    strip.background = element_blank(),
+    plot.margin = margin(25,30,15,15, unit = "pt"),
+    panel.grid.major = element_line(),
+    panel.grid.minor = element_line(linetype = "dashed")
+  )
+}
+```
+
+
+### Loading the data
+
+```{r message=FALSE, warning=FALSE}
+# Loading
+data <- read.csv2("Experiment Dataset.csv")
+
+diffFactor <- factor(levels = c("Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"))
+
+# Preparing
+data %>%
+  mutate(
+    Q4 = factor(Q4, levels(diffFactor)),
+    Q5 = factor(Q5, levels(diffFactor)),
+    Q6 = factor(Q6, levels(diffFactor)),
+    Q7 = factor(Q7, levels(diffFactor))
+  ) -> data
+```
+
+### Perceived Difficulty
+
+```{r fig.width=8, fig.height=4}
+data %>%
+  select(Participant, Q4, Q5, Q6, Q7) %>%
+  rename(
+    "Assembly" = Q4,
+    "Installation" = Q5,
+    "Configuration" = Q6,
+    "Overall" = Q7
+  ) %>%
+  pivot_longer(-Participant, names_to = "Step", values_to = "Answer") %>%
+  mutate(Step = factor(Step, levels = unique(Step))) %>%
+ggplot(aes(Participant, Answer)) +
+  geom_hline(yintercept = "Moderate", linetype = "longdash") +
+  geom_point(aes(color = Step), size = 3) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_y_discrete(limits = levels(diffFactor)) +
+  scale_x_continuous(expand = expansion(mult = 0.4)) +
+  facet_grid(~ Step) +
+  labs(
+    title = "Perceived Difficulty during Experiment Phases",
+    x = "Participants"
+  ) +
+  theme_R() +
+  theme(
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    panel.spacing.x = unit(c(0.2,0.2,0.8), "cm"),
+    strip.text = element_text(face = "bold", size = 10)
+  )
+```
+
+### Time Spent
+
+```{r fig.width=8, fig.height=4}
+secondsTo_mmss <- function(sec) {
+  minutes <- floor(sec / 60)
+  seconds <- sec %% 60
+  text <- sprintf("%01d:%02d", minutes, seconds)
+  return(text)
+}
+
+data %>%
+  select(Participant, Assembly, Installation, Onboarding, Configuration) %>%
+  # Onboarding was measured as a separate time,
+  # but can be merged with configuration for the evaluation of this experiment
+  mutate(Configuration = Configuration + Onboarding) %>%
+  select(-Onboarding) %>%
+  pivot_longer(-Participant, names_to = "Phase", values_to = "Time") %>%
+  mutate(
+    Phase = factor(Phase, levels = unique(Phase)),
+    Participant = factor(Participant, levels = rev(unique(Participant))),
+    TimeFormatted = secondsTo_mmss(Time)
+  ) %>%
+
+ggplot(aes(Participant, Time)) +
+  geom_bar(
+    aes(fill = Phase),
+    stat = "identity",
+    position = position_stack(reverse = TRUE),
+    width = 0.25
+  ) +
+  geom_text(
+    aes(label = TimeFormatted),
+    position = position_stack(vjust = 0.5),
+    size = 10,
+    size.unit = "pt",
+    vjust = -0.8
+  ) +
+  coord_flip() +
+  scale_x_discrete(expand = expansion(c(0.1,0.135))) +
+  scale_y_continuous(
+    labels = seq(0, 16, by = 4),
+    breaks = seq(0, 960, by = 240),
+    expand = expansion(c(0,0.1))
+  ) +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(
+    title = "Time Spent by Participants in Experiment Phases",
+    x = "Participants",
+    y = "Time (minutes)"
+  ) +
+  theme_R() +
+  theme(
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(vjust = 0.3),
+    panel.grid.major.y = element_blank()
+  )
+```
+
+### Participants' Skills
+
+```{r fig.width=8, fig.height=4}
+data %>%
+  select(Participant, Q1, Q2, Q3) %>%
+  rename(
+    "ItSkills" = Q1,
+    "ShExperience" = Q2,
+    "RPiExperience" = Q3
+  ) %>%
+  mutate(
+    ItSkills = factor(ItSkills, levels = c("Beginner", "Intermediate", "Advanced", "Expert")),
+    ShExperience = factor(ShExperience, levels = c("None", "Beginner", "Intermediate", "Advanced")),
+    RPiExperience = factor(RPiExperience, levels = c("Yes", "No"))
+  ) %>%
+  mutate(Participant = factor(Participant, levels = unique(Participant))) %>%
+ggplot(aes(x = 0.5)) +
+  geom_jitter(aes(y = ShExperience, color = RPiExperience), size = 3, width = 0.1, height = 0 ) +
+  facet_grid(~ ItSkills, switch = "x", drop = FALSE) +
+  scale_x_continuous(breaks = c(0.5), limits = c(0,1)) +
+  scale_y_discrete(limits = c("None", "Beginner", "Intermediate", "Advanced")) +
+  labs(
+    title = "Participants' Skills",
+    subtitle = "Self-evaluation of Participants",
+    x = "IT Skills",
+    y = "Smart Home",
+    color = "Raspberry Pi\nExperience"
+  ) +
+  
+  theme_R() +
+  theme(
+    plot.title = element_text(margin = margin(0,0,5,0)),
+    plot.subtitle = element_text(margin = margin(0,0,20,0)),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    strip.text = element_text(face = "bold", size = 10)
+  )
+```
+
+

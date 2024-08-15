@@ -18,7 +18,11 @@ The main research question of this paper is:
 \subsection{Research method}
 With a view to the aforementioned topics, this paper will start off with a brief introduction to smart home systems and discuss selected terminologies while focusing on the most commonly adopted smart home platforms. We will then later examine the imposing risks of smart home devices that are connected to cloud infrastructure based on literature and case-study reviews, and assess a handful of security measures to mitigate associated privacy risks. The main proposal within this realm will be to deploy \textit{Home Assistant} as a smart home platform and thereby omit the use of cloud connections for controlling smart home appliances altogether. To emphasize the value proposition of this approach, a major section of this paper will explore how Home Assistant operates and compare this system to competing smart home platforms, as well as highlight important topics for deploying Home Assistant within one's home. 
 
-After elaborating this proposal, a small experiment with a few participants will be conducted in order to investigate the entrance barriers for new users who want to deploy Home Assistant on their own. For this the on-boarding process for setting up  Home Assistant will be assessed by the participants. Their experience and feedback will then be used to estimate if the value proposition of Home Assistant would be appealing to a broader scope of users.
+After elaborating this proposal, Home Assistant will be compared to traditional smart home platforms based on its capabilities. Additionally, a small experiment with a few participants will be conducted in order to investigate the entrance barriers for new users who want to deploy Home Assistant on their own. For this the installation and on-boarding process for setting up Home Assistant on a Raspberry Pi will be assessed by the participants. Their experience and feedback will then be used to estimate if this approach of starting with Home Assistant would be appealing to a broader scope of users.
+
+\paragraph{\textit{Open-Access:}}
+\label{thesis:github_repo}
+This paper, including the used materials, is available at this public github repository: \href{https://github.com/dir-rafa/Bachelor-thesis-Home-Assistant}{https://github.com/dir-rafa/Bachelor-thesis-Home-Assistant}
 
 \newpage
 
@@ -28,7 +32,7 @@ After elaborating this proposal, a small experiment with a few participants will
 A \textit{Smart Home System} is the superset of connected devices and technologies that represent the physical and logical subtleties that make up the \textit{Smart Home}, but is most commonly used as a synonym for the \textit{Smart Home Platform} that handles communication between multiple devices and hosts the respective user interface.
 This terminologies do not really refer to the same concepts, since controlling devices via multiple platforms could have some benefits, e.g. different household residents want to use their respective Android or iOS native smart home platforms, but separating devices into multiple systems and therefore isolating them from communicating with another, will most often not be desirable.
 
-A major point of differentiation of smart home systems is the medium that connects devices together \cite{ReviewOfSmartHomes-6177682}. While many alternatives exists for wireless systems \cite{ReviewOfSmartHomes-6177682}, \textit{KNX} dominates the market for wired systems \cite{BertkoChris2017HSH:}. Since the latter must be planned in advance and requires physical connections between devices, they are more expensive than wireless systems and are only deployable within the scope of a major renovation or construction of a new building \cite{BertkoChris2017HSH:}. Therefore, wireless systems are particularly interesting for homeowners who want to upgrade their existing home to a smart home. Moreover this approach has the benefit that expanding the system is easier to accomplish as no new wires are required. For this reason we will focus on wireless systems when discussing smart home platforms, but first of all we will explore what a smart home is.
+A major point of differentiation of smart home systems is the medium that connects devices together \cite{ReviewOfSmartHomes-6177682}. While many alternatives exists for wireless systems \cite{ReviewOfSmartHomes-6177682}, \textit{KNX} dominates the market for wired systems \cite{BertkoChris2017HSH:}. Since the latter must be planned in advance and requires physical connections between devices, they are more expensive than wireless systems and are only deployable within the scope of a major renovation or construction of a new building \cite{BertkoChris2017HSH:}. Therefore, wireless systems are particularly interesting for homeowners who want to upgrade their existing home to a smart home. Moreover, this approach has the benefit that expanding the system is easier to accomplish as no new wires are required. For this reason we will focus on wireless systems when discussing smart home platforms, but first of all we will explore what a smart home is.
 
 \subsection{What is a Smart Home?}
 At its core a \textit{Smart Home} is an interconnected network of home appliances that enables the home owner to perform actions that they would not be able to perform, in a comparative form, without the ability of the devices to communicate with each other. This does not necessarily require the user to perform manual actions, such as operating a light switch, but rather means that some trigger (like a switch or a sensor) can have an effect on a wider scope of appliances than itself is physically connected with. A common example for this is a self-regulating heating system, where temperature sensors control when a room needs to be heated, but the system is interrupted by smart contact sensors if the windows are opened \cite{BertkoChris2017HSH:}. The same system can be later expanded by setting a time trigger to warm up the bathroom before a resident gets up in the morning \cite{Tuohy2023SHP}.
@@ -44,7 +48,7 @@ In some sense a Smart Home can be viewed as the "[...] natural evolution of our 
 Like the uniqueness of physical houses, two distinct smart homes will always differ from each other. Although they may share certain properties, one should not imagine building a smart home as a normed operation. While a house must have an entrance and probably will have some windows, a smart home must have a common communication protocol and likely will have some form of user-interaction interface, but the physical location and material of that house windows will be determined by the preferences of the homeowner. Likewise the preferences for the visual representation of the user interface, or deployed technologies, will be different on a home to home basis depending on the requirements and needs of the homeowner. Therefore, smart homes can fulfil different purposes and \textbf{ operate at different levels of complexity} according to the preferences, interests, and technical proficiency of their owner.
 
 \subsection{Smart Home Platforms} \label{sec:Smart Home Platforms}
-The \textit{Smart Home Platform} is a software framework that provides services to a smart home that enables the execution of actions with higher levels of complexity such as automations, serves as an organisational layer of abstraction (e.g. to group devices together), and acts as a central hub for managing smart devices. One of its core tasks is to handle communication between devices that use different communication protocols \cite{ReviewOfSmartHomes-6177682} or follow different specifications from different manufacturers \cite{Tuohy2023SHP}. Moreover smart home platforms often provide a graphical user interface in the form of an smartphone-app or web interface for controlling devices and hosts some notification system to inform the user about changes or alerts. The organisation of devices is most often done by grouping them by their location into \textit{rooms} that act as a digital counterpart of the physical house \cite{BertkoChris2017HSH:}.
+The \textit{Smart Home Platform} is a software framework that provides services to a smart home that enables the execution of actions with higher levels of complexity such as automations, serves as an organisational layer of abstraction (e.g. to group devices together), and acts as a central hub for managing smart devices. One of its core tasks is to handle communication between devices that use different communication protocols \cite{ReviewOfSmartHomes-6177682} or follow different specifications from different manufacturers \cite{Tuohy2023SHP}. Moreover, smart home platforms often provide a graphical user interface in the form of an smartphone-app or web interface for controlling devices and hosts some notification system to inform the user about changes or alerts. The organisation of devices is most often done by grouping them by their location into \textit{rooms} that act as a digital counterpart of the physical house \cite{BertkoChris2017HSH:}.
 
 The most popular smart home platforms for consumers are developed by large tech companies \cite{Tuohy2023SHP} and are well known for their simple installation and easy integration of popular devices. Without particular order those \textit{mainstream smart home platforms} are:
 \begin{itemize}
@@ -54,11 +58,11 @@ The most popular smart home platforms for consumers are developed by large tech 
     \item \textbf{Samsung SmartThings} - developed by Samsung
 \end{itemize}
 
-Most smart home platforms require a physical hardware component such as a \textit{hub} \cite{BertkoChris2017HSH:} that can host these services, but many manufacturers combine this with some other type of appliance such as a smart speaker \cite{Tuohy2023SHP}, but sometimes they are just small pucks that sit in an outlet somewhere in your home \cite{Tuohy2023SHH}. In any case, they act as the brain of the smart home platform and are essential for their operation.
+Most smart home platforms require a physical hardware component such as a \textit{hub} \cite{BertkoChris2017HSH:} that can host these services, but many manufacturers combine this with some other type of appliance such as a smart speaker \cite{Tuohy2023SHP}, but sometimes they are just small pucks that sit in an outlet somewhere in a home \cite{Tuohy2023SHH}. In any case, they act as the brain of the smart home platform and are essential for their operation.
 
-In addition, hubs commonly incorporate radios for various wireless technologies that are required for local communication with your devices \cite{Tuohy2023SHH}. Local connectivity means that your smart home could be operated without a cloud connection and therefore stay operational in the event of an internet outage. However, not every smart home platform is equally independent from their manufacturers cloud. Especially voice assistants tend to be rendered useless without a cloud connection. Although some basic voice commands will most often work offline, more complex tasks require an active Internet connection. The importance of cloud connectivity for e.g. Alexa is apparent on their support site. The word "cloud" is mentioned 76 times in their roughly 18-page long FAQ-section about the operations of their voice assistant \cite{AmazonAlexaFAQ}.
+In addition, hubs commonly incorporate radios for various wireless technologies that are required for local communication with devices \cite{Tuohy2023SHH}. Local connectivity means that a smart home could be operated without a cloud connection and therefore stay operational in the event of an internet outage. However, not every smart home platform is equally independent from their manufacturers cloud. Especially voice assistants tend to be rendered useless without a cloud connection. Although some basic voice commands will most often work offline, more complex tasks require an active Internet connection. The importance of cloud connectivity for e.g. Alexa is apparent on their support site. The word "cloud" is mentioned 76 times in their roughly 18-page long FAQ-section about the operations of their voice assistant \cite{AmazonAlexaFAQ}.
 
-A common property of three of the four above-listed smart home platforms (with Alexa being the exception) is that they are developed by companies which also develop smartphones. They are also naively installed on those mobile devices. Although this in itself may not be significant for their success reasons, there might be an incentive for users to deploy the smart home platform that is developed by their phone manufacturer.
+A common property of three of the four above-listed smart home platforms (with Alexa being the exception) is that they are developed by companies which also develop smartphones. They are also natively installed on those mobile devices. Although this in itself may not be significant for their success reasons, there might be an incentive for users to deploy the smart home platform that is developed by their phone manufacturer.
 
 Besides aforementioned platforms, there are many other alternatives that are direct competitors or have a focus on specific use cases. \textit{Home Assistant} is one of them and will be assessed in detail in section \ref{sec:Home Assistant}.
 
@@ -153,7 +157,7 @@ Therefore, considering cloud connections before purchasing a fleet of smart home
 \subsection{IoT Network Security}
 A common security approach to control the network traffic of devices is to establish VLANs that essentially operate as separated virtual networks and to implement powerful firewall rules to block unwanted traffic. Those techniques are also suitable for smart homes to protect against various threats \cite{SH-NetworkSecurity-9990734}. Furthermore, network segmentation can be used to block cloud connections on the network layer by setting up an \textit{IoT-VLAN} and configuring separate firewall rules for this segment. Smart home devices can be placed on this network, which then can be used not only to isolate devices from the Internet, but also to protect personal devices or sensitive data on the network from being accessed by IoT devices \cite{BMI-SmartHomeSecurity}. This can also be taken one step further by deploying \textit{Private VLANs} that isolate devices completely from one another, so that all traffic must go through the router \cite{SH-NetworkSecurity-9990734}.
 
-Some modern routers provide the option to easily configure a separate WLAN network to integrate only IoT devices \cite{BMI-SmartHomeSecurity}. Alternatively, the \textit{Guest-Wifi} often serves a similar purpose. However, setting up firewall rules to block smart home devices from connecting to their cloud server requires some technical knowledge from the user. Therefore, network security can be difficult for smart home novices to configure.
+Some modern routers provide the option to easily configure a separate WiFi network to integrate only IoT devices \cite{BMI-SmartHomeSecurity}. Alternatively, the \textit{Guest-WiFi} often serves a similar purpose. However, setting up firewall rules to block smart home devices from connecting to their cloud server requires some technical knowledge from the user. Therefore, network security can be difficult for smart home novices to configure.
 
 Even so, blocking network traffic can be very effective when devices offer a local API but do not allow the user to deactivate all cloud connections.
 
@@ -337,7 +341,7 @@ A Virtual Private Network (VPN) enables the user to remotely access the resource
 Setting up port forwarding means exposing the Home Assistant instance publicly. Therefore, in no circumstances should this be done without setting up proper end-to-end encryption, which requires a \textit{public domain} and a \textit{certificate}. Since some Internet Service Providers only offer dynamic IP addresses, this is easiest done by using a \textit{Dynamic DNS service} \cite{HomeAssistant_Remote_Access} like \href{https://www.duckdns.org/}{DuckDNS}\footnote{https://www.duckdns.org/} and a \textit{certificate service} like \href{https://letsencrypt.org/}{Let's Encrypt}\footnote{https://letsencrypt.org/}, which both are completely free of charge. For setting this up with Home Assistant the user can install the \href{https://github.com/home-assistant/addons/blob/master/duckdns/DOCS.md}{DuckDNS add-on}\footnote{https://github.com/home-assistant/addons/blob/master/duckdns/DOCS.md} from the add-on store and follow the instructions from their documentation. In essence, after installation, the user is required to register an account at DuckDNS, select a free domain name, copy an API token \& domain to the configuration of the add-on, and accept the Let's Encrypt terms of service. Everything else, including renewal of the certificate, is done by the application \cite{HomeAssistant_DuckDNS_github}. After exposing a port on the router the HA instance should be remotely accessible. However, access is of course still protected by user credentials and two-factor authentication. 
 
 \subsection{Dashboards}
-Home Assistant's approach on dashboards is somewhat different to most smart home platforms. While e.g. Apple Home exposes all of the users devices on the dashboard as soon as they are added to the smart home system, HA wants the user to \textit{create and layout} their dashboard according to their personal liking and handle device management on a separate device panel in the settings. Moreover, Home Assistant allows the user to create as many dashboards as they want.
+Home Assistants' approach on dashboards is somewhat different to most smart home platforms. While e.g. Apple Home exposes all of the users devices on the dashboard as soon as they are added to the smart home system, HA wants the user to \textit{create and layout} their dashboard according to their personal liking and handle device management on a separate device panel in the settings. Moreover, Home Assistant allows the user to create as many dashboards as they want.
 
 This approach offers the advantage that dashboards can be more refined, personalised, and specialised than in most smart home systems, but also means that devices have to be explicitly added to the dashboard, which can be time consuming at first. 
 
@@ -727,16 +731,103 @@ Furthermore, Samsung Smart Things and Home Assistant can each use Google Assista
 
 In relation to the research question of this paper, this comparison shows that Home Assistant can indeed be a viable alternative to cloud-based smart home systems based on its capabilities. The primary weakness of Home Assistant at the moment is its voice assistant. Although, comparing a locally hosted service with a cloud service may not be entirely fair. Users who are open to using a cloud-based voice assistant can still integrate services like Google Assistant into Home Assistant, thus addressing this weakness. In this configuration, Home Assistant would then show no shortcomings compared to the cloud-based smart home platforms.
 
-In terms of the defined capabilities, a fully local installation of Home Assistant is rivaled only by Samsung Smart Things. However, this comparison excludes human-focused attributes such as user-experience, which should be subject to future research.
+In terms of the defined capabilities, a fully local installation of Home Assistant is therefore rivaled only by Samsung Smart Things. However, this comparison excludes human-focused attributes such as user-experience, which would be subject to future research.
 
 %% Section 6 - Experimente
 
 \section{Experiment: Adoption of Home Assistant}
+In this final section, an experiment is conducted to evaluate the adoption process of Home Assistant. The aim is to investigate if the proposed method of deploying an instance of Home Assistant on a Raspberry Pi, as elaborated in section \ref{sec:ha-installation}, is suited for potential smart home users. This would offer an alternative to purchasing a hub as it is necessary for the deployment of other traditional smart home systems. However, this experiment will focus on the experience of a small group of participants, and the results should be interpreted as a collection of first-time user experiences rather than generalised conclusions.
 
+\subsection{Experiment Design}
+Participants will be asked to complete a questionnaire before and after the experiment. The pre-experiment questionnaire will gather information on their general IT skills, as well as their experience with smart home technology and Raspberry Pi. The post-experiment questionnaire will focus on their experience during the setup of Home Assistant. The experiment itself consists of assembling a Raspberry Pi into its case, flashing a micro-SD card with the Home Assistant operating system, setting up the HA instance on the Raspberry Pi and finally connecting and controlling one smart home device using Home Assistant.
+
+A brief overview of the questionnaire can be found in Table \ref{tab:experiment-questionnaire}. The top section contains the pre-experiment questions, while the bottom section holds the post-experiment questions. Additionally, each question provides extra space (not displayed in this table) for participants to describe their experiences further.
+
+\begin{table}[H]
+    \centering
+    \caption{Experiment Questionnaire}
+    \label{tab:experiment-questionnaire}
+    \begin{threeparttable}
+    \begin{tabularx}{\textwidth}{X X X X l}
+        \toprule
+        \multicolumn{5}{ l }{\small\textbf{IT Skills:}} \\
+        \multicolumn{5}{ l }{How would you describe your IT skills?} \\
+        \Square\footnotesize Beginner & \Square\footnotesize Intermediate & \Square\footnotesize Advanced & \Square\footnotesize Expert &  \\[2ex]
+
+        \multicolumn{5}{ l }{\small\textbf{Smart Home Technology Experience:}} \\
+        \multicolumn{5}{ l }{What is your previous experience with smart home technology?} \\
+        \Square\footnotesize None & \Square\footnotesize Beginner & \Square\footnotesize Intermediate & \Square\footnotesize Advanced &  \\[2ex]
+
+        \multicolumn{5}{ l }{\small\textbf{Raspberry Pi Experience:}} \\
+        \multicolumn{5}{ l }{Have you ever used or assembled a Raspberry Pi before?} \\
+        \Square\footnotesize Yes & \Square\footnotesize No & & & \\[2ex]
+
+        \midrule
+        \midrule
+
+        \multicolumn{5}{ l }{\small\textbf{Assembly Process:}} \\
+        \multicolumn{5}{ l }{How would you describe your experience of the assembly process?} \\
+        \Square\footnotesize Very Easy & \Square\footnotesize Easy & \Square\footnotesize Moderate & \Square\footnotesize Difficult & \Square\footnotesize Very Difficult \\[2ex]
+
+        \multicolumn{5}{ l }{\small\textbf{Installation Process:}} \\
+        \multicolumn{5}{ l }{How would you describe your experience of the installation process?} \\
+        \Square\footnotesize Very Easy & \Square\footnotesize Easy & \Square\footnotesize Moderate & \Square\footnotesize Difficult & \Square\footnotesize Very Difficult \\[2ex]
+
+        \multicolumn{5}{ l }{\small\textbf{Configuration  Process:}} \\
+        \multicolumn{5}{ l }{How would you describe your experience of adding a device to HA?} \\
+        \Square\footnotesize Very Easy & \Square\footnotesize Easy & \Square\footnotesize Moderate & \Square\footnotesize Difficult & \Square\footnotesize Very Difficult \\[2ex]
+
+        \multicolumn{5}{ l }{\small\textbf{Overall  Process:}} \\
+        \multicolumn{5}{ l }{How would you describe your overall experience?} \\
+        \Square\footnotesize Very Easy & \Square\footnotesize Easy & \Square\footnotesize Moderate & \Square\footnotesize Difficult & \Square\footnotesize Very Difficult \\[2ex] \bottomrule
+    \end{tabularx}
+    \end{threeparttable}
+\end{table}
+
+\paragraph{\textit{Note:}}
+\textit{The full questionnaire as well as the participants answers are available at this papers' github repository (see section \ref{thesis:github_repo}).}
 
 \newpage
 
+\subsection{Experiment Evaluation}
+
+The experiment involved six participants with varying IT skills and experience with smart home technologies. In particular, two participants had never used a Raspberry Pi, while others briefly used one during their school education. A visual self-categorisation of participants' skills can be found in Figure~\ref{fig:exp_skills}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.95\linewidth]{Bachelorarbeit/img/exp_skills.png}
+    \caption{Participants categorised by their IT-Skills, Smart Home, and Raspberry PI experience}
+    \label{fig:exp_skills}
+\end{figure}
+
+Overall, participants found setting up a Home Assistant instance on a Raspberry Pi to be rather easy throughout all phases of the experiment. Only one participant encountered challenges during the configuration process, which included the onboarding process and connecting devices to the instance. They stated that this was mostly due to the overwhelming user interface of Home Assistant. A breakdown of the perceived difficulty of the participants is visualised in Figure~\ref{fig:exp_difficulty}.
+
+Furthermore, two patterns emerged when comparing the time required to complete the experiment. Participants who had used a Raspberry Pi before took around 12 minutes to perform all tasks, while those new to Raspberry Pi needed a few extra minutes. However, this was mainly due to the extra time that they needed to flash the Home Assistant image on the micro-SD card. The Raspberry Pi assembly process did not present a particularly challenging task. Further information on the time required by the participants for each phase can be found in Figure~\ref{fig:exp_timeSpent}. It should be noted that these times do not include the preparation time that is needed by the Raspberry Pi to download all dependencies from the linux package repository (up to 20 minutes) since this is idle time for the user and not relevant for this experiment
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.95\linewidth]{Bachelorarbeit/img/exp_difficulty.png}
+    \caption{Perceived Difficulty of Participants during Experiment Phases}
+    \label{fig:exp_difficulty}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.95\linewidth]{Bachelorarbeit/img/exp_timeSpent.png}
+    \caption{Time Spent by Participants in Experiment Phases}
+    \label{fig:exp_timeSpent}
+\end{figure}
+
+Although the conclusions from this experiment cannot be generalised, the results suggest that installing Home Assistant on a Raspberry PI is worth trying even for those unfamiliar with Raspberry Pi or other smart home platforms. In particular, users who already own a Pi have the opportunity to try out Home Assistant at no additional cost with a negligible investment of time and effort. Considering the confusion many participants faced when first encountering the Home Assistant user interface post-onboarding, it is recommended that new users spent some time reviewing the basic documentation pages in order to get familiar with Home Assistants' structure and features.
+
 %% Section 7 - Conclusion
 
-\section{Conclusion and Reflection}
+\section{Conclusion}
 
+This paper highlighted concerns associated with the cloud-based nature of smart home technologies and devices that have been developed in the recent years which jeopardise the users' privacy and agency over their personal and smart home data. In some cases, revoking access to cloud infrastructure even renders otherwise functional devices as electronic waste. While cloud technology can be very helpful to users, the development of cloud-dependencies must be critically assessed by users who expect their devices to remain functional over many years. Home Assistant offers an alternative to this cloud-based smart home with their vision of \textit{The Open Home} that focuses on privacy, choice and sustainability through local operation and giving users full ownership of their smart home data. Additionally, this paper demonstrated that Home Assistant is a competitive alternative to traditional smart home systems, providing a wide range of advanced capabilities that allow users to enhance their smart home experience further. The only feature that Home Assistant currently cannot fully substitute is an alternative to voice assistants, where competitors still maintain an advantage due to the resource-intensive nature of voice processing. The conducted experiment suggests that any user, regardless of their technical proficiency, interested in deploying a locally hosted smart home can start using Home Assistant today on their own hardware or on power-efficient mini-computers like a Raspberry Pi.
+
+
+\section*{Acknowledgements}
+\addcontentsline{toc}{section}{Acknowledgements}
+
+The author of this paper would like to sincerely thank Mr. ao.Univ.Prof. Dr.~Johann~Mitl\"ohner for his unwavering support and invaluable feedback throughout the writing of this thesis. Furthermore, the author wants to extend his thanks the open-source community, whose collective efforts help developing and improving Home Assistant and similar projects.
